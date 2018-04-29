@@ -2,7 +2,7 @@
 using UnityEngine.SceneManagement;
 using System.Collections;
 
-public class Done_GameController : MonoBehaviour
+public class GameController : MonoBehaviour
 {
 	public GameObject[] hazards;
 	public Vector3 spawnValues;
