@@ -44,15 +44,41 @@ public class PlayerController : NetworkBehaviour {
 
 		transform.Rotate(0,0, -rot);
 		transform.Translate (world * getNewSpeed(v), Space.World);
+		var fixedPos = new Vector3 (Mathf.Clamp (transform.position.x, -1000, 1000),
+			               Mathf.Clamp (transform.position.y, -1000, 1000),
+			               0);
+		transform.position = fixedPos;
+		print (transform.position.x);
+		print (transform.position.y);
+		print (transform.position.z);
 	}
 		
 	float getNewSpeed(float v) {
 
 		var maxSpeed = 2;
-		if (v > 0)
+		/*if (v > 0)
 			currSpeed += 0.02f * (maxSpeed - currSpeed);
 		else if (v < 0)
-			currSpeed -= 0.02f * (currSpeed);
+			currSpeed -= 0.02f * (currSpeed);*/
+		if (v > 0) {
+			if (currSpeed > 0.01)
+				currSpeed *= 1.1f;
+			else if (currSpeed < -0.01)
+				currSpeed /= 1.1f;
+			else
+				currSpeed += 0.01f;
+		} else if (v < 0) {
+			if (currSpeed > 0.01)
+				currSpeed /= 1.1f;
+			else if (currSpeed < -0.01)
+				currSpeed *= 1.1f;
+			else
+				currSpeed -= 0.01f;
+		} else {
+			if (currSpeed > -0.05 && currSpeed < 0.05)
+				currSpeed = 0;
+			else currSpeed /= 1.1f;
+		}
 
 		if (currSpeed > maxSpeed) {
 			currSpeed = maxSpeed;
