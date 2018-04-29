@@ -24,6 +24,10 @@ public class PlayerController : NetworkBehaviour {
 	}
 
 	void doMove() {
+		if (!isLocalPlayer)
+        {
+            return;
+        }
 		var world = transform.TransformDirection(Vector3.up);
 		var rot = Input.GetAxis("Horizontal") * Time.deltaTime * 150f;
 		var v = Input.GetAxis("Vertical") * Time.deltaTime;
@@ -34,6 +38,7 @@ public class PlayerController : NetworkBehaviour {
 			var shotController = instance.GetComponent<ShotController> ();
 			shotController.direction = world;
 			shotController.speed = currSpeed + 1f;
+			shotController.localPlayer = this.gameObject;
 
 			NetworkServer.Spawn (instance);
 			shotCooldown = 10;
@@ -48,18 +53,16 @@ public class PlayerController : NetworkBehaviour {
 			               Mathf.Clamp (transform.position.y, -1000, 1000),
 			               0);
 		transform.position = fixedPos;
-		print (transform.position.x);
-		print (transform.position.y);
-		print (transform.position.z);
 	}
 		
 	float getNewSpeed(float v) {
 
 		var maxSpeed = 2;
-		/*if (v > 0)
+		if (v > 0)
 			currSpeed += 0.02f * (maxSpeed - currSpeed);
 		else if (v < 0)
-			currSpeed -= 0.02f * (currSpeed);*/
+			currSpeed -= 0.02f * (currSpeed);
+		/*
 		if (v > 0) {
 			if (currSpeed > 0.01)
 				currSpeed *= 1.1f;
@@ -79,6 +82,7 @@ public class PlayerController : NetworkBehaviour {
 				currSpeed = 0;
 			else currSpeed /= 1.1f;
 		}
+		*/
 
 		if (currSpeed > maxSpeed) {
 			currSpeed = maxSpeed;
@@ -91,6 +95,12 @@ public class PlayerController : NetworkBehaviour {
 	public override void OnStartLocalPlayer() {
 		var m = Camera.main;
 		m.GetComponent<CameraFollow>().setTarget(gameObject.transform);
+	}
+
+	void OnTriggerEnter (Collider other)
+	{
+		Destroy (other.gameObject);
+		Destroy (gameObject);
 	}
 }
 

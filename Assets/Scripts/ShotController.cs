@@ -5,6 +5,7 @@ using UnityEngine;
 public class ShotController : MonoBehaviour {
 	public Vector3 direction;
 	public float speed;
+	public GameObject localPlayer;
 
 	int lifeFrames = 100;
 
@@ -21,5 +22,12 @@ public class ShotController : MonoBehaviour {
 		lifeFrames--;
 
 		this.transform.Translate (direction * speed, Space.World);
+	}
+
+	void OnCollisionEnter2D (Collision2D col)
+	{
+		if (col.gameObject != localPlayer && col.gameObject.tag != "shot"){
+			Destroy(col.gameObject);
+		}
 	}
 }
